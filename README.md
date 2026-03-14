@@ -8,7 +8,7 @@ This document presents our strategy for building an **AI-enabled parametric insu
 
 Our solution focuses strictly on **loss of income protection**, excluding health, accident, or vehicle coverage as required by the challenge constraints.
 
-This platform strictly insures **loss of income due to external disruptions only**, and does **not cover health, accidents, medical expenses, or vehicle damage**.
+This platform insures loss of income caused solely by **external disruptions** and does **not cover health, accidents, medical expenses, or vehicle damage**.
 
 ---
 
@@ -28,7 +28,7 @@ External disruptions such as:
 * heavy rainfall
 * extreme heat
 * pollution spikes
-* traffic gridlocks
+* severe traffic congestion
 
 can significantly reduce their working hours, often resulting in **20–30% income loss per month**.
 
@@ -74,14 +74,30 @@ Automatic claim generated
 Instant payout processed
 ```
 
-Workers **do not need to file manual claims** under normal circumstances.
+### Parametric Trigger Mechanism
 
-This approach provides:
+Unlike traditional insurance claims that require manual verification and documentation, our platform relies on **parametric triggers**.
 
-* zero-touch claims
-* fast payouts
-* minimal fraud exposure
-* transparent insurance coverage
+A parametric trigger is a predefined measurable condition (such as rainfall exceeding a threshold) that automatically activates insurance coverage.
+
+When the disruption detection engine confirms that a trigger condition has been met, the system initiates the claim automation workflow without requiring manual claim submission.
+
+This mechanism enables **instant claim initiation and rapid payouts**, significantly reducing operational overhead and claim processing delays.
+
+### Why Parametric Insurance Works for Gig Workers
+
+Traditional insurance models rely on manual claims processing, which is slow and expensive to operate.
+
+However, gig workers experience **frequent short-term disruptions**, such as rainstorms or pollution spikes, that temporarily prevent them from working.
+
+Parametric insurance is ideal for this scenario because it:
+
+- eliminates manual claims verification  
+- enables instant payouts  
+- reduces operational costs  
+- provides predictable compensation  
+
+This allows the platform to deliver **fast, reliable income protection for gig workers**.
 
 ---
 
@@ -121,7 +137,7 @@ Ravi loses **3 hours of peak earnings**.
 **Platform Response**
 
 ```
-Weather API detects rainfall threshold
+Weather API reports rainfall exceeding disruption threshold
 ↓
 Disruption engine confirms event
 ↓
@@ -129,7 +145,7 @@ Active policies in the zone are identified
 ↓
 Income loss calculated
 ↓
-Claim automatically triggered
+Claim automation workflow triggered
 ↓
 Payout credited instantly
 ```
@@ -163,6 +179,29 @@ Worker receives compensation
 ```
 
 This workflow ensures workers receive **fast and reliable protection against income loss**.
+
+### Manual Claim Fallback
+
+Although the platform primarily relies on automated parametric triggers, a manual claim request option is also available.
+
+This feature handles scenarios where:
+
+- external APIs temporarily fail
+- disruption signals are missed
+- unexpected edge cases occur
+
+Worker flow:
+```
+Worker submits manual claim request  
+↓  
+System validates disruption data using external APIs  
+↓  
+Claim is approved or rejected  
+
+If validated, the system generates a claim and processes the payout.
+```
+
+This mechanism ensures **reliability and fairness even during rare detection failures**.
 
 ---
 
@@ -247,6 +286,105 @@ The system continuously monitors external signals.
 | Traffic Gridlock | Congestion > 85%   | Medium   |
 
 When a threshold persists beyond a minimum duration, a **disruption event** is created.
+
+---
+
+## Disruption Detection Engine
+
+The platform includes a **Disruption Detection Engine** responsible for identifying real-world events that prevent delivery workers from earning.
+
+The engine continuously monitors environmental signals using scheduled checks.
+
+### Data Sources
+
+The engine retrieves data from multiple external sources:
+
+- Weather APIs  
+- Traffic APIs  
+- Mock delivery platform APIs  
+
+These sources provide signals such as:
+
+- rainfall intensity
+- temperature levels
+- air quality index (AQI)
+- traffic congestion levels
+
+---
+
+### Monitoring Cycle
+
+The system performs automated monitoring at regular intervals.
+
+Example interval:
+
+Every **5 minutes**
+
+During each cycle:
+
+1. External data is collected from APIs  
+2. Environmental signals are processed  
+3. Threshold rules are evaluated  
+4. Disruption events are generated if conditions are met  
+
+---
+
+### Detection Logic
+
+The engine evaluates predefined thresholds for disruption signals.
+
+Example rules:
+```
+IF rainfall > 50mm
+AND duration > 15 minutes
+THEN disruption = HEAVY_RAIN
+
+IF temperature > 42°C
+THEN disruption = EXTREME_HEAT
+
+IF AQI > 300
+THEN disruption = POLLUTION_SPIKE
+
+IF traffic_congestion > 85%
+THEN disruption = TRAFFIC_GRIDLOCK
+```
+
+Once a threshold persists for the required duration, the system creates a **disruption record**.
+
+---
+
+### Event Generation
+
+When a disruption is confirmed, the system publishes an event to the event pipeline.
+
+Event published to the event pipeline:
+
+EVENT: DISRUPTION_DETECTED
+
+Example event payload:
+
+```
+{
+        zone_id: "indiranagar",
+        type: "HEAVY_RAIN",
+        severity: "HIGH",
+        start_time: "2026-03-15T18:30:00Z"
+}
+```
+
+This event triggers the automated claim generation workflow.
+
+---
+
+### Why This Engine Matters
+
+The disruption detection engine enables **parametric insurance automation** by:
+
+- continuously monitoring real-world signals
+- detecting disruption conditions automatically
+- triggering insurance claims without manual intervention
+
+This allows the platform to deliver **fast, zero-touch insurance payouts** for gig workers.
 
 ---
 
@@ -336,6 +474,8 @@ Data Layer
                                     └──────────────────────┘
 ```
 
+Redis Streams is used to process disruption and claim events asynchronously, allowing the system to handle large volumes of real-time disruption signals while keeping services loosely coupled.
+
 ---
 
 # External Data Sources
@@ -382,6 +522,37 @@ Payment Service
         ▼
 Worker receives payout
 ```
+
+### Event Consumers
+
+Each event in the pipeline is processed by dedicated system services.
+
+DISRUPTION_DETECTED → Claim Automation Engine  
+CLAIM_CREATED → Fraud Detection Service  
+CLAIM_APPROVED → Payment Service  
+PAYMENT_PROCESSED → Worker Notification Service  
+
+This event-driven design allows the platform to process insurance workflows asynchronously and scale individual components independently.
+
+### Claim Automation Logic
+
+Once a disruption event is generated, the platform automatically identifies affected workers and generates claims.
+
+The automation process works as follows:
+
+1. Identify the disruption zone from the event
+2. Find workers operating within the affected zone
+3. Check for active insurance policies
+4. Estimate income loss based on disruption duration
+5. Generate insurance claims automatically
+
+Example payout calculation:
+
+```
+Lost Income = Avg_Hourly_Income × Disruption_Duration
+```
+
+This automation ensures that workers receive payouts without needing to submit manual claims.
 
 ---
 

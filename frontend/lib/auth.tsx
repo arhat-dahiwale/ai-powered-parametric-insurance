@@ -16,6 +16,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ADMIN_EMAILS = ["admin@gmail.com"];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -35,18 +37,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUser = async (jwt: string) => {
     try {
         const decoded: any = jwtDecode(jwt);
-        const role = decoded.role || "worker";
-        if (role === "worker") {
-            const { data } = await workerAPI.getProfile();
-            setUser({ ...data, role: "worker" });
-        } else {
-            // Admin – no worker profile needed. Use userId as id, email optional.
-            setUser({ id: decoded.userId, email: "", role: "admin" });
-        }
-    } catch (error) {
-        logout();
+
+        // Always fetch profile first
+        const { data } = await workerAPI.getProfile();
+
+        // Decide role based on email
+        const role = ADMIN_EMAILS.includes(data.email) ? "admin" : "worker";
+
+        setUser({ ...data, role });
+            } 
+            
+    catch (error) {
+      logout();
     }
-  };
+          };
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);

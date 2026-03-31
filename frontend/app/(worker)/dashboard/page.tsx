@@ -18,25 +18,29 @@ export default function WorkerDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-    try {
-        const [policiesRes, claimsRes] = await Promise.all([
-        policyAPI.getMyPolicies(),
-        claimAPI.getMyClaims(),
-        ]);
+      try {
+        const policiesRes = await policyAPI.getMyPolicies();
         setPolicies(policiesRes.data);
+      } catch (err) {
+        console.error("Failed to load policies", err);
+        setError("Failed to load policies");
+      }
+
+      try {
+        const claimsRes = await claimAPI.getMyClaims();
         setClaims(claimsRes.data);
-    } catch (err: any) {
+      } catch (err: any) {
         if (err.response?.status === 404) {
-        // Claims endpoint not ready – treat as empty
-        setClaims([]);
+          // Claims endpoint not implemented → expected
+          setClaims([]);
         } else {
-        setError("Failed to load dashboard data");
-        console.error(err);
+          console.error("Claims error", err);
         }
-    } finally {
+      } finally {
         setLoading(false);
-    }
+      }
     };
+
     fetchData();
   }, []);
 

@@ -16,9 +16,9 @@ const onboardingSchema = z.object({
 });
 
 const zones = [
-  { id: "123e4567-e89b-12d3-a456-426614174000", name: "Indiranagar, Bengaluru" },
-  { id: "123e4567-e89b-12d3-a456-426614174001", name: "Koramangala, Bengaluru" },
-  { id: "123e4567-e89b-12d3-a456-426614174002", name: "Bandra, Mumbai" },
+  { id: "11111111-1111-1111-1111-111111111111", name: "Indiranagar, Bengaluru" },
+  { id: "22222222-2222-2222-2222-222222222222", name: "Koramangala, Bengaluru" },
+  { id: "33333333-3333-3333-3333-333333333333", name: "Bandra, Mumbai" },
 ];
 
 type OnboardingForm = z.infer<typeof onboardingSchema>;

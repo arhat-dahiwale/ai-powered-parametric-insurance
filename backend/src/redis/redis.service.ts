@@ -5,7 +5,7 @@ import Redis from 'ioredis'
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
-  private client: Redis
+  private client!: Redis
 
   onModuleInit() {
     this.client = new Redis(process.env.REDIS_URL!)

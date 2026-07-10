@@ -6,9 +6,10 @@ import { ClaimsRepository } from "./claims.repository"
 import { ClaimsConsumer } from "./claims.consumer"
 import { DatabaseModule } from "../../database/database.module"
 import { RedisModule } from "../../redis/redis.module"
+import { EventsModule } from "../../events/events.module"
 
 @Module({
-  imports: [DatabaseModule, RedisModule],
+  imports: [DatabaseModule, EventsModule, RedisModule],
   providers: [ClaimsService, ClaimsRepository, ClaimsConsumer],
 })
 export class ClaimsModule {}

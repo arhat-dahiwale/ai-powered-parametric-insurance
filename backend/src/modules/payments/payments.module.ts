@@ -6,9 +6,10 @@ import { PaymentsRepository } from "./payments.repository"
 import { PaymentsConsumer } from "./payments.consumer"
 import { DatabaseModule } from "../../database/database.module"
 import { RedisModule } from "../../redis/redis.module"
+import { EventsModule } from "../../events/events.module"
 
 @Module({
-  imports: [DatabaseModule, RedisModule],
+  imports: [DatabaseModule, RedisModule, EventsModule],
   providers: [PaymentsService, PaymentsRepository, PaymentsConsumer],
 })
 export class PaymentsModule {}

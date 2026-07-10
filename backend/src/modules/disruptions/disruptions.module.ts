@@ -5,10 +5,10 @@ import { DisruptionsController } from "./disruptions.controller"
 import { DisruptionsService } from "./disruptions.service"
 import { DisruptionsRepository } from "./disruptions.repository"
 import { DatabaseModule } from "../../database/database.module"
-import { RedisModule } from "../../redis/redis.module"
+import { EventsModule } from "../../events/events.module"
 
 @Module({
-  imports: [DatabaseModule, RedisModule],
+  imports: [DatabaseModule, EventsModule],
   controllers: [DisruptionsController],
   providers: [DisruptionsService, DisruptionsRepository],
   exports: [DisruptionsService],

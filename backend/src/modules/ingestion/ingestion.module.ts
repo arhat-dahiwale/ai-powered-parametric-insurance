@@ -4,7 +4,7 @@ import { IngestionService } from "./ingestion.service"
 import { IngestionScheduler } from "./ingestion.scheduler"
 import { WeatherProvider } from "./providers/weather.provider"
 import { DisruptionsModule } from "../disruptions/disruptions.module"
-import { DatabaseModule } from "src/database/database.module"
+import { DatabaseModule } from "../../database/database.module";
 
 @Module({
   imports: [DisruptionsModule, DatabaseModule],

@@ -1,4 +1,4 @@
-// src/common/guards/auth.guards.ts
+// src/common/guards/auth.guard.ts
 import {
   CanActivate,
   ExecutionContext,
